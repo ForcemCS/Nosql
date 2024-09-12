@@ -1,0 +1,622 @@
+db.grades.insertMany([
+  {
+    student_id: 546789,
+    products: [
+      {
+        type: "quiz",
+        score: 50,
+      },
+      {
+        type: "homework",
+        score: 70,
+      },
+      {
+        type: "quiz",
+        score: 66,
+      },
+      {
+        type: "exam",
+        score: 70,
+      },
+    ],
+    class_id: 551,
+  },
+  {
+    student_id: 777777,
+    products: [
+      {
+        type: "exam",
+        score: 83,
+      },
+      {
+        type: "quiz",
+        score: 59,
+      },
+      {
+        type: "quiz",
+        score: 72,
+      },
+      {
+        type: "quiz",
+        score: 67,
+      },
+    ],
+    class_id: 550,
+  },
+  {
+    student_id: 223344,
+    products: [
+      {
+        type: "exam",
+        score: 45,
+      },
+      {
+        type: "homework",
+        score: 39,
+      },
+      {
+        type: "quiz",
+        score: 40,
+      },
+      {
+        type: "homework",
+        score: 88,
+      },
+    ],
+    class_id: 551,
+  },
+])
+
+db.zips.find({ _id: ObjectId("5c8eccc1caa187d17ca6ed16") })
+
+
+db.zips.find({ city: { $in: ["PHOENIX", "CHICAGO"] } })
+
+
+db.sales.find({ "items.price": { $gt: 50}})
+
+db.sales.find({ "items.price": { $lt: 50}})
+
+db.sales.find({ "customer.age": { $lte: 65}})
+
+db.sales.find({ "customer.age": { $gte: 65}})
+
+
+db.sales.find({
+  items: {
+    $elemMatch: { name: "laptop", price: { $gt: 800 }, quantity: { $gte: 1 } },
+  },
+})
+
+db.accounts.find({products: {$elemMatch: { $eq: "CurrencyService"}}})
+
+db.routes.find({ "airline.name": "Southwest Airlines", stops: { $gte: 1 } })
+
+db.routes.find({
+  $or: [{ dst_airport: "SEA" }, { src_airport: "SEA" }],
+})
+
+db.routes.find({
+  $and: [
+    { $or: [{ dst_airport: "SEA" }, { src_airport: "SEA" }] },
+    { $or: [{ "airline.name": "American Airlines" }, { airplane: 320 }] },
+  ]
+})
+
+
+db.sales.find({couponUsed: true, purchaseMethod: "Online", "customer.age": {$lte: 25}})
+
+
+db.sales.find({$or: [{"items.name": "pens"},{"items.tags": "writing"}]})
+
+
+db.books.replaceOne(
+  {
+    _id: ObjectId("6282afeb441a74a98dbbec4e"),
+  },
+  {
+    title: "Data Science Fundamentals for Python and MongoDB",
+    isbn: "1484235967",
+    publishedDate: new Date("2018-5-10"),
+    thumbnailUrl:
+      "https://m.media-amazon.com/images/I/71opmUBc2wL._AC_UY218_.jpg",
+    authors: ["David Paper"],
+    categories: ["Data Science"],
+  }
+)
+
+
+{
+  "common_name": "Morning Dove",
+  "scientific_name": "Zenaida macroura",
+  "wingspan_cm": 37.23,
+  "habitat": ["urban areas", "farms", "grassland"],
+  "diet": ["seeds"],
+}
+
+
+db.birds.replaceOne(
+  {
+    _id: ObjectId('6286809e2f3fa87b7d86dccd')
+  },
+  {
+    "common_name": "Morning Dove",
+    "scientific_name": "Zenaida macroura",
+    "wingspan_cm": 37.23,
+    "habitat": ["urban areas", "farms", "grassland"],
+    "diet": ["seeds"],
+  }
+)
+
+$ set运算符将字段的值替换为指定值，如以下代码所示：
+
+db.podcasts.updateOne(
+  {
+    _id: ObjectId("5e8f8f8f8f8f8f8f8f8f8f8"),
+  },
+
+  {
+    $set: {
+      subscribers: 98562,
+    },
+  }
+)
+$upsert如果没有文档符合过滤条件， upsert选项将创建一个新文档。这是一个例子：
+
+db.podcasts.updateOne(
+  { title: "The Developer Hub" },
+  { $set: { topics: ["databases", "MongoDB"] } },
+  { upsert: true }
+)
+$push运算符将新值添加到hosts数组字段。这是一个例子：
+
+db.podcasts.updateOne(
+  { _id: ObjectId("5e8f8f8f8f8f8f8f8f8f8f8") },
+  { $push: { hosts: "Nic Raboy" } }
+)
+
+
+db.birds.updateOne({ _id: ObjectId("6268471e613e55b82d7065d7")},{ $push: {diet: {$each : ["newts", "opossum", "skunks", "squirrels"]}}})  追加
+
+
+db.birds.updateOne(
+  {
+    common_name: "Robin Redbreast",
+  },
+  {
+    $inc: {
+      "sightings": 1,
+    },
+    $set: {
+      last_updated: new Date(),
+    },
+  },
+  {
+    upsert: true,
+  }
+)
+
+
+db.podcasts.findAndModify({
+  query: { _id: ObjectId("6261a92dfee1ff300dc80bf1") },
+  update: { $inc: { subscribers: 1 } },
+  new: true,
+})
+
+
+db.books.updateMany(
+  { publishedDate: { $lt: new Date("2019-01-01") } },
+  { $set: { status: "LEGACY" } }
+)
+
+db.birds.updateMany({$or: [{common_name:'Grackle'},{common_name:'Blue Jay'}]},{$set: {last_seen: ISODate('2022-01-01')}})
+
+db.birds.updateMany(
+  {
+    common_name: {
+      $in: ["Blue Jay", "Grackle"],
+    },
+  },
+  {
+    $set: {
+      last_seen: ISODate("2022-01-01"),
+    },
+  }
+)
+
+db.grades.updateMany(
+  {
+    class_id: {
+$in: [ 377, 259, 350 ]
+    },
+   },
+  {
+    $push: {
+      scores: [ 
+{ type : 'extra credit', score: 100 }
+]
+    }
+  }
+)
+
+db.podcasts.deleteOne({ _id: Objectid("6282c9862acb966e76bbf20a") })
+
+db.podcasts.deleteMany({category: “crime”})
+
+------------------
+游标是指向查询结果集的指针，find()返回了一个游标
+
+db.accounts.find({products: {$in: ['Derivatives', 'InvestmentStock']}},{limit: 1, account_id: 1}).sort({limit:1 }).limit(3)
+
+db.sales.find({ "items.name": { $in: ["laptop", "backpack", "printer paper"] }, "storeLocation": "London", }).sort({ saleDate: -1, }).limit(3)
+
+db.inspections.find(
+  { sector: "Restaurant - 818" },
+  { business_name: 1, result: 1, _id: 0 }
+)
+
+
+db.trips.countDocuments({ tripduration: { $gt: 120 }, usertype: "Subscriber" })
+
+
+db.sales.countDocuments({ items: { $elemMatch: { name: "laptop", price: { $lt: 600 } } } } )  在同一个id中同时满足
+
+
+---------
+db.collection.aggregate([
+    {
+        $stage1: {
+            { expression1 },
+            { expression2 }...
+        },
+        $stage2: {
+            { expression1 }...
+        }
+    }
+])
+
+在 MongoDB 聚合管道中使用 $match 和 $group 阶段
+
+db.zips.aggregate([
+{   
+   $match: { 
+      state: "CA"
+    }
+},
+{
+   $group: {
+      _id: "$city",
+      totalZips: { $count : { } }
+   }
+}
+])
+
+
+
+db.sightings.aggregate([ { $match: { species_common: 'Eastern Bluebird' } }, { $group: { _id: '$location.coordinates', number_of_sightings: { $count: {}}}}] )
+
+db.zips.aggregate([
+{
+  $sort: {
+    pop: -1
+  }
+},
+{
+  $limit:  5
+}
+])
+
+
+
+如果一个文档原本有 city: "New York" 和 state: "NY"，那么更新后会新增一个 place: "New York, NY" 的字段。
+
+{
+    $set: {
+        place: {
+            $concat:["$city",",","$state"]
+        },
+        pop:10000
+     }
+  }
+  
+db.sightings.aggregate([ { $match: { date: { $gt: ISODate('2022-01-01T00:00:00.000Z'), $lt: ISODate('2023-01-01T00:00:00.000Z') }, species_common: 'Eastern Bluebird' } }, { $count: 'bluebird_sightings_2022' }] )
+
+
+db.sightings.aggregate([ { $match: { date: { $gte: ISODate('2022-01-01T00:00:00.0Z'), $lt: ISODate('2023-01-01T00:00:00.0Z') } } }, { $out: 'sightings_2022' }] )
+
+
+---------------
+#创建单字段索引
+db.customers.createIndex({
+  birthdate: 1
+})
+
+#创建唯一的单字段索引
+db.customers.createIndex({
+  email: 1
+},
+{
+  unique:true
+})
+#查看集合中使用的索引
+db.customers.getIndexes()
+#检查查询是否正在使用索引
+运行查询时在集合中使用explain()来查看执行计划。该计划提供了执行阶段的详细信息（IXSCAN、COLLSCAN、FETCH、SORT 等）。
+
+IXSCAN阶段指示查询正在使用索引以及正在选择什么索引。
+
+COLLSCAN阶段表示正在执行集合扫描，但不使用任何索引。
+
+FETCH阶段表示正在从集合中读取文档。
+
+SORT阶段表示文档正在内存中排序。
+
+---
+单子段，多键索引
+db.accounts.createIndex({ transfers_complete: 1 })
+db.accounts.explain().find({ transfers_complete: { $in: ["TR617907396"] } })
+
+#复合索引中的字段顺序 Equality, Sort, Range
+db.customers.find({
+  birthdate: {
+    $gte:ISODate("1977-01-01")
+    },
+    active:true
+    }).sort({
+      birthdate:-1, 
+      name:1
+      })
+	  
+
+IXSCAN - 使用复合索引进行索引扫描
+
+PROJECTION_COVERED - 所有需要的信息都由索引返回，无需从内存中获取
+
+db.customers.explain().find({
+  birthdate: {
+    $gte:ISODate("1977-01-01")
+    },
+  active:true
+  },
+  {name:1,
+    birthdate:1, 
+    _id:0
+  }).sort({
+    birthdate:-1,
+    name:1
+    })
+	
+db.accounts.createIndex({ account_holder: 1, balance: 1, account_type: 1 })
+db.accounts.explain().find( { account_holder:"Andrea", balance:{ $gt:5 }}, { account_holder: 1, balance: 1, account_type:1, _id: 0}).sort({ balance: 1 })
+
+
+db.accounts.find( { account_holder:"Andrea", balance:{ $gt:5 }})
+
+
+#删除索引
+Delete index by name: 按名称删除索引：
+
+db.customers.dropIndex(
+  'active_1_birthdate_-1_name_1'
+)
+Delete index by key: 按键删除索引：
+
+db.customers.dropIndex({
+  active:1,
+  birthdate:-1, 
+  name:1
+})
+
+db.collection.dropIndexes([
+  'index1name', 'index2name', 'index3name'
+  ])
+  
+
+-------------------
+atlas clusters search indexes create --clusterName myAtlasClusterEDU -f /app/search_index.json
+
+
+atlas clusters search indexes list --clusterName myAtlasClusterEDU --db sample_supplies --collection sales
+
+
+db.sales.findOne()
+
+var pipeline = [
+  {
+    $search: {
+      index: 'sample_supplies-sales-dynamic',
+      text: {
+        query: 'notepad',
+        path: { 'wildcard': '*' }
+      } } },
+  {
+    $set: {
+      score: { $meta: "searchScore" }
+      }
+  }
+]
+db.sales.aggregate(pipeline)
+
+//复合运算
+“must”、“mustNot”、“should”和“filter”。
+
+“必须”将排除不符合条件的记录。 “mustNot”将排除符合条件的结果。 “应该”将允许您对符合标准的结果给予重视，以便它们首先出现。 “过滤器”将删除不符合条件的结果。
+
+$search {
+  "compound": {
+    "must": [{
+      "text": {
+        "query": "field",
+        "path": "habitat"
+      }
+    }],
+    "should": [{
+      "range": {
+        "gte": 45,
+        "path": "wingspan_cm",
+        "score": {"constant": {"value": 5}}
+      }
+    }]
+  }
+}
+
+
+db.sales.aggregate([
+  {
+    $search: {
+      index: 'sample_supplies-sales-dynamic',
+      "compound": {
+        "filter": [
+          {
+            "text": {
+              "query": "Online",
+              "path": "purchaseMethod"
+            }
+          }
+        ],
+        "should": [
+          {
+            "text": {
+              "query": "notepad",
+              "path": "items.name",
+              "score": { "constant": { "value": 5 } }
+            }
+          }
+      ]
+      }
+    }
+  },
+  {
+    $project: {
+    "items.name": 1,
+    "purchaseMethod": 1,
+    "score": { $meta: "searchScore" }
+    }
+  }
+])
+
+
+$searchMeta 是 Atlas Search 的聚合阶段，其中显示与搜索相关的元数据。这意味着，如果我们的搜索结果使用facet分成多个存储桶，我们可以在$searchMeta阶段看到它，因为这些存储桶是有关搜索结果如何格式化的信息。
+
+$searchMeta: {
+    "facet": {
+        "operator": {
+            "text": {
+            "query": ["Northern Cardinal"],
+            "path": "common_name"
+            }
+        },
+        "facets": {
+            "sightingWeekFacet": {
+                "type": "date",
+                "path": "sighting",
+                "boundaries": [ISODate("2022-01-01"), 
+                    ISODate("2022-01-08"),
+                    ISODate("2022-01-15"),
+                    ISODate("2022-01-22")],
+                "default" : "other"
+            }
+        }
+    }
+}
+
+
+
+-------------------------
+数据模型
+
+{
+  "account_id": "MDB653115886",
+  "account_holder": "Herminia Mckinney",
+  "account_type": "savings",
+  "balance": 6617.34,
+  "street_num": 123,
+  "street": "Main St",
+  "city": "Tulsa",
+  "state": "OK",
+  "zip": 74008,
+  "country": "USA",
+  "home_phone": 1234567890,
+  "cell_phone": 1111111111,
+  "transfers": [
+    ...
+  ],    
+}
+
+可以采取以下哪些操作来改进此架构？考虑以下要求：
+
+  
+  保持所有字段之间的一对一关系。
+  
+  将联系人信息和帐户信息分开。
+  
+  将一起访问的数据存储在一起。
+
+
+创建两个集合：一个用于帐户，一个用于 customer_info。
+将电话号码嵌入为子文档。
+
+
+###嵌入式文档（将各种关系存储在单个文档中），如果嵌入嵌入结构复杂，会使得应用程序占用的内存，逐步增多
+```
+{
+  name: {firstName: “Sarah”, lastName: “Davis”}
+  Job: professor
+  Address:                      一对多的关系
+  {mailingAddress:
+    Street: 402 Maple
+    City: Chicago
+    Zipcode: 81442 }
+  {secondaryAddress:
+    Street: 318 University Blvd
+    City: Chicago
+    Zipcode: 81445}
+  {emergencyAddress:
+    Name: Kerri Davis
+    Street: 42 Wallaby Way
+    City: Sydney
+    Zipcode: 78 AUZ90
+    Country: Australia }
+}
+```
+---
+```
+Atlas atlas-a847ea-shard-0 [primary] bank> db.accounts.find( { account_id: "MDB740836066" } )
+[
+  {
+    _id: ObjectId("62c843bdcd93ba83edcc7614"),
+    account_id: 'MDB740836066',
+    account_holder: 'Naja Petersen',
+    account_type: 'savings',
+    balance: 2891.8,
+    transfers_complete: [ 'TR784553031', 'TR728134708', 'TR396066257' ]
+  }
+]
+```
+const session = db.getMongo().startSession()
+
+session.startTransaction()
+
+const account = session.getDatabase('< add database name here>').getCollection('<add collection name here>')
+
+//Add database operations like .updateOne() here
+
+session.commitTransaction()
+
+Aborting a Transaction 中止交易
+
+如果您发现自己处于需要在事务完成之前回滚数据库操作的情况，您可以中止该事务。这样做会将数据库回滚到事务启动之前的原始状态。
+
+
+
+以下是用于在事务完成之前取消事务的代码的概述：
+
+const session = db.getMongo().startSession()
+
+session.startTransaction()
+
+const account = session.getDatabase('< add database name here>').getCollection('<add collection name here>')
+
+//Add database operations like .updateOne() here
+
+session.abortTransaction()
